@@ -89,7 +89,7 @@ let
           <div>
             <h3>All posts</h3>
             <ul>
-            ${toString (map ({ url, title, ... }: "<li><a href='${url}'>${title}</a></li>") sorted-posts)}
+            ${toString (map ({ url, title, published, ... }: "<li><a href='${url}'>${published} - ${title}</a></li>") sorted-posts)}
             </ul>
           </div >
         '';
