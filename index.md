@@ -9,6 +9,6 @@ the inner-working of things.
 
 To nudge myself into cleaning up and clarifying my notes, I decided to publish
 them below. You'll mainly find Clojure in there for now. Do not hesitate to
-[create an issue](https://github.com/chpill/chpill.github.io/issues) if you
+[create an issue](https://github.com/chpill/blog/issues) if you
 encounter any errors. You can also contact me directly on my email adress:
 etienne at spillemaeker dot com.

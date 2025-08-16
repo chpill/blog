@@ -39,7 +39,7 @@ let
     builtins.lessThan (f b) (f a);
   sorted-posts = builtins.sort (anti-chrono-comparator (x: x.published)) posts;
   site-title = "Chpill's (Over) Engineering Log";
-  site-url = "https://chpill.github.io";
+  site-url = "https://blog.chpill.fr";
   site-author = "Etienne Spillemaeker";
   page =
     {
@@ -74,7 +74,7 @@ let
           </main>
           <footer style="margin-top:3rem;text-align:center;">
             <hr />
-            <p><small>Made with <a href="https://pandoc.org/">Pandoc</a></small></p>
+            <p><small>Made with <a href="https://pandoc.org/">Pandoc</a> and <a href="https://nixos.org/">Nix</a></small></p>
           </footer>
         </body>
       </html>

@@ -9,7 +9,7 @@
 
 ;; Redundant with the meta of the index.html?
 (def site-title "Chpill's (Over) Engineering Log")
-(def site-url "https://chpill.github.io")
+(def site-url "https://blog.chpill.fr")
 
 (defn head [title]
   [:head
