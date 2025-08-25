@@ -133,13 +133,26 @@
             networking.firewall.allowedTCPPorts = [ 80 ];
             # For some unadequately explored reasons, this delays the start of the container
             networking.useDHCP = false;
-            services.nginx = {
-              enable = true;
-              virtualHosts."container.local" = {
-                default = true;
-                locations."/".root = self.packages.${system}.website;
+            services.nginx =
+              let
+                site = self.packages.${system}.website;
+              in
+              {
+                enable = true;
+                virtualHosts."container.local" = {
+                  default = true;
+                  # TODO this does not work...
+                  # We want to add some cache control immutable header on the assets
+                  locations."/assets/" = {
+                    #root = "${site}/assets/";
+                    root = site + /assets;
+                    extraConfig = "add_header  X-plop plouf;";
+                  };
+
+
+                  locations."/".root = site;
+                };
               };
-            };
           }
         ];
       };
