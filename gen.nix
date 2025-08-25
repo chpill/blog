@@ -41,6 +41,21 @@ let
   site-title = "Chpill's (Over) Engineering Log";
   site-url = "https://blog.chpill.fr";
   site-author = "Etienne Spillemaeker";
+  immutableLink =
+    fileName:
+    let
+      filePath = ./${fileName};
+      hashAlgo = "sha256";
+      hash = builtins.hashFile hashAlgo filePath;
+      toHashFormat = "nix32"; # kind of like base 32
+      digest = builtins.substring 0 30 (builtins.convertHash { inherit hash hashAlgo toHashFormat; });
+    in
+    {
+      name = "assets/${digest}-${fileName}";
+      path = filePath;
+    };
+  cssLink = immutableLink "pandoc-gfm.css";
+  feedIconLink = immutableLink "atom-feed-icon.svg";
   page =
     {
       title ? "",
@@ -54,7 +69,7 @@ let
         <head>
             <title>${title}</title>
             <meta charset="utf-8"/>
-            <link href="/assets/pandoc-gfm.css" rel="stylesheet"/>
+            <link href="/${cssLink.name}" rel="stylesheet"/>
         </head>
         <body>
           <nav style="align-items:center;display:flex;justify-content:space-around;">
@@ -63,7 +78,7 @@ let
             </h4>
             <a href="/en/feed.xml">
               <svg height="30px" width="30px">
-                <use href="/assets/atom-feed-icon.svg#icon"></use>
+                <use href="/${feedIconLink.name}#icon"></use>
               </svg>
             </a>
           </nav>
@@ -89,7 +104,17 @@ let
           <div>
             <h3>All posts</h3>
             <ul>
-            ${toString (map ({ url, title, published, ... }: "<li><a href='${url}'>${published} - ${title}</a></li>") sorted-posts)}
+            ${toString (
+              map (
+                {
+                  url,
+                  title,
+                  published,
+                  ...
+                }:
+                "<li><a href='${url}'>${published} - ${title}</a></li>"
+              ) sorted-posts
+            )}
             </ul>
           </div >
         '';
@@ -147,14 +172,9 @@ pkgs.linkFarm "website" (
       name = "index.html";
       path = page (append-table-of-content index-data);
     }
-    {
-      name = "assets/pandoc-gfm.css";
-      path = ./pandoc-gfm.css;
-    }
-    {
-      name = "assets/atom-feed-icon.svg";
-      path = ./atom-feed-icon.svg;
-    }
+    # TODO can we reuse the file name in the nix store directly?
+    cssLink
+    feedIconLink
     {
       name = "en/feed.xml";
       path = feed;
