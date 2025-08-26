@@ -136,21 +136,29 @@
             services.nginx =
               let
                 site = self.packages.${system}.website;
+                # From ietf.org/rfc/rfc2616.txt:
+                # To mark a response as 'never expires,' an origin server sends
+                # an Expires date approximately one year from the time the
+                # response is sent. HTTP/1.1 servers SHOULD NOT send Expires
+                # dates more than one year in the future.
+                max-age = "31536000";
               in
               {
                 enable = true;
+                # When the url does not match the regex, $cache_control will be
+                # empty, and Nginx will not add the Cache_Control header to the
+                # response
+                appendHttpConfig = ''
+                  map $uri $cache_control {
+                    ~/assets/ "max-age=${max-age}, public, immutable";
+                  }
+                '';
                 virtualHosts."container.local" = {
                   default = true;
-                  # TODO this does not work...
-                  # We want to add some cache control immutable header on the assets
-                  locations."/assets/" = {
-                    #root = "${site}/assets/";
-                    root = site + /assets;
-                    extraConfig = "add_header  X-plop plouf;";
+                  locations."/" = {
+                    root = site;
+                    extraConfig = "add_header Cache-Control $cache_control;";
                   };
-
-
-                  locations."/".root = site;
                 };
               };
           }
