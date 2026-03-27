@@ -3,51 +3,18 @@
   inputs = {
     proxy-flake.url = "github:chpill/proxy-flake";
     nixpkgs.follows = "proxy-flake/nixpkgs";
-    # TODO find how to make a "deep" follow of nixpkgs
-    # Maybe use
-    # https://fzakaria.com/2024/07/31/automatic-nix-flake-follows
-    clj-nix = {
-      url = "github:jlesquembre/clj-nix";
-      inputs.nixpkgs.follows = "proxy-flake/nixpkgs";
-    };
   };
   outputs =
-    {
-      self,
-      nixpkgs,
-      clj-nix,
-      ...
-    }@inputs:
+    { self, nixpkgs, ... }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
-      clj-nix-pkgs = clj-nix.packages.${system};
-      lib = pkgs.lib;
-      fs = lib.fileset;
-      content-src = fs.toSource {
-        root = ./.;
-        fileset = fs.unions [
-          ./pandoc-gfm.css
-          ./atom-feed-icon.svg
-          ./index.md
-          ./en
-        ];
-      };
-      clj-src = fs.toSource {
-        root = ./.;
-        fileset = fs.unions [
-          ./deps.edn
-          ./deps-lock.json
-          ./src
-        ];
-      };
     in
     {
       formatter.${system} = pkgs.nixfmt-tree;
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
           pandoc
-          (clojure.override { jdk = jdk24; })
           # To view the pages locally:
           # cd publish && python -m http.server
           python3
@@ -63,37 +30,10 @@
         {
           inherit website;
           default = website;
-          clj-nix-deps-lock = clj-nix-pkgs.deps-lock;
-          clj-website-gen = clj-nix-pkgs.mkCljBin {
-            projectSrc = clj-src;
-            name = "chpill.blog/render";
-            main-ns = "render.core";
-          };
-          previousWebsiteInClojure =
-            pkgs.runCommandLocal "previousWebsiteInClojure"
-              {
-                nativeBuildInputs = [
-                  self.packages.${system}.clj-website-gen
-                  pkgs.pandoc
-                ];
-              }
-              ''
-                cp ${./pandoc-gfm.css} "pandoc-gfm.css"
-                cp ${./atom-feed-icon.svg} "atom-feed-icon.svg"
-                cp ${./index.md} "index.md"
-                cp -r ${./en} "en/"
-                render $out
-              '';
         };
       checks.${system} =
         let
           site = self.packages.${system}.default;
-          previous-site = self.packages.${system}.previousWebsiteInClojure;
-          feed-compare = clj-nix-pkgs.mkCljBin {
-            projectSrc = clj-src;
-            name = "chpill.blog/feedtest";
-            main-ns = "render.feed-test";
-          };
         in
         {
           # TODO add a test using xmllint

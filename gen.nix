@@ -98,26 +98,24 @@ let
     { body, ... }@data:
     data
     // {
-      body =
-        body
-        + ''
-          <div>
-            <h3>All posts</h3>
-            <ul>
-            ${toString (
-              map (
-                {
-                  url,
-                  title,
-                  published,
-                  ...
-                }:
-                "<li><a href='${url}'>${published} - ${title}</a></li>"
-              ) sorted-posts
-            )}
-            </ul>
-          </div >
-        '';
+      body = body + ''
+        <div>
+          <h3>All posts</h3>
+          <ul>
+          ${toString (
+            map (
+              {
+                url,
+                title,
+                published,
+                ...
+              }:
+              "<li><a href='${url}'>${published} - ${title}</a></li>"
+            ) sorted-posts
+          )}
+          </ul>
+        </div >
+      '';
     };
   to-iso-datetime = date: "${date}T00:00:00Z";
   post-update-date =
