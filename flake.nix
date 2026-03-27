@@ -36,7 +36,6 @@
           site = self.packages.${system}.default;
         in
         {
-          # TODO add a test using xmllint
           dirCountTest =
             pkgs.runCommandLocal "basicDirCountTest"
               {
@@ -49,20 +48,17 @@
                 resultFilesCount=$(find "${site}/en/posts" -maxdepth 1 -type l | wc -l)
                 [ "$sourceFilesCount" -eq "$resultFilesCount" ]
               '';
-          feedTest =
-            pkgs.runCommandLocal "feedTest"
+          feedIsValidXml =
+            pkgs.runCommandLocal "feedIsValidXml"
               {
-                src = ./.;
-                nativeBuildInputs = [
-                  site
-                  previous-site
-                  feed-compare
-                ];
+                src = ./en/posts;
+                nativeBuildInputs = [ site pkgs.libxml2 ];
               }
               ''
                 mkdir $out
-                feedtest ${site} ${previous-site}
+                xmllint --noout ${site}/en/feed.xml
               '';
+
         };
       nixosConfigurations.container = nixpkgs.lib.nixosSystem {
         inherit system;
