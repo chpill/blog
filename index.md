@@ -1,14 +1,8 @@
-Hello, I'm Etienne Spillemaeker, also known as
-[chpill](https://github.com/chpill) on Github. I'm a software engineer living in
-France, near Paris.
+Hello, I'm [chpill](https://github.com/chpill).
 
-I have been self-diagnosed with a terminal case of over-engineering. The
-suffering (of my colleagues) is intense. More seriously, I like the plumbing
-aspect of programming and I often dig into libraries and projects to understand
-the inner-working of things.
+Here you'll find some of my notes on random programming subjects I find
+interesting.
 
-To nudge myself into cleaning up and clarifying my notes, I decided to publish
-them below. You'll mainly find Clojure in there for now. Do not hesitate to
-[create an issue](https://github.com/chpill/blog/issues) if you
-encounter any errors. You can also contact me directly on my email adress:
+Do not hesitate to [create an issue](https://github.com/chpill/blog/issues) if
+you encounter any errors. You can also contact me directly on my email adress:
 etspill at proton dot me.
