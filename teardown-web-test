@@ -1,0 +1,2 @@
+#! /usr/bin/env bash
+sudo nixos-container destroy web-test && echo "cleaned up web-test"

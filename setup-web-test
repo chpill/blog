@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+sudo nixos-container destroy web-test && echo "cleaned up web-test"
+sudo nixos-container create web-test --flake .
+sudo nixos-container start web-test
